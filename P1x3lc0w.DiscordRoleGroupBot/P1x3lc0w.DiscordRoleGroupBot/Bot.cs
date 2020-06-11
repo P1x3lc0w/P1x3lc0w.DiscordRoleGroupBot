@@ -17,6 +17,7 @@ namespace P1x3lc0w.DiscordRoleGroupBot
         internal BotEventHandler BotEventHandler { get; private set; }
 
         internal BotData Data { get; private set; }
+        private BotConfig _config;
 
         public Bot()
         {
@@ -55,10 +56,11 @@ namespace P1x3lc0w.DiscordRoleGroupBot
 
         private void CreateOrLoadData() 
         {
+            _config = BotConfig.LoadConfigFromFile("botconfig.json");
             Data = new BotData();
         }
-        public Task StartBot(string token) 
-            => SocketClient.LoginAsync(TokenType.Bot, token);
+        public Task StartBot() 
+            => SocketClient.LoginAsync(TokenType.Bot, _config.token);
 
         public Task Log(LogMessage arg)
         {
