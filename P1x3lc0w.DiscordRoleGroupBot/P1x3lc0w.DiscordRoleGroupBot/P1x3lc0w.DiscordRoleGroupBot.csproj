@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Discord.Net" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\P1x3lc0w.Common\P1x3lc0w.Common\P1x3lc0w.Common.csproj" />
+    <ProjectReference Include="..\..\..\P1x3lc0w.Extensions\P1x3lc0w.Extensions\P1x3lc0w.Extensions.csproj" />
+  </ItemGroup>
+
+</Project>
