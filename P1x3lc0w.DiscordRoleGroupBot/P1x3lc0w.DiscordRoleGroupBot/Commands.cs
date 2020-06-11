@@ -192,6 +192,8 @@ namespace P1x3lc0w.DiscordRoleGroupBot
         [RequireUserPermission(GuildPermission.Administrator)]
         public async Task UpdateAllUsers()
         {
+            SourceBot.BotEventHandler.DisableUserUpdate = true;
+
             IReadOnlyCollection<IGuildUser> users = await Context.Guild.GetUsersAsync();
 
             int counter = 0;
@@ -225,6 +227,7 @@ namespace P1x3lc0w.DiscordRoleGroupBot
             }
 
             await ReplyInfoAsync("Updated all users.");
+            SourceBot.BotEventHandler.DisableUserUpdate = false;
         }
 
         [Command("admin user update")]

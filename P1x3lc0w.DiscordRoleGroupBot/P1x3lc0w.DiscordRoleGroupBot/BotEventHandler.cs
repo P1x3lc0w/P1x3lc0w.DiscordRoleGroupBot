@@ -12,6 +12,8 @@ namespace P1x3lc0w.DiscordRoleGroupBot
     {
         public Bot SourceBot { get; private set; }
 
+        public bool DisableUserUpdate { get; set; } = false;
+
         public BotEventHandler(Bot sourceBot)
         {
             SourceBot = sourceBot;
@@ -47,7 +49,8 @@ namespace P1x3lc0w.DiscordRoleGroupBot
 
         internal async Task OnGuildMemberUpdated(IGuildUser before, IGuildUser after) 
         {
-            await UserActions.UpdateUserRoles(after, SourceBot.Data, SourceBot.Log);
+            if(!DisableUserUpdate)
+                await UserActions.UpdateUserRoles(after, SourceBot.Data, SourceBot.Log);
         }
 
         internal async Task OnLoggedIn()
