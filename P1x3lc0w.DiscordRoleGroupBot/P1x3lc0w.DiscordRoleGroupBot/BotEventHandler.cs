@@ -17,14 +17,24 @@ namespace P1x3lc0w.DiscordRoleGroupBot
             SourceBot = sourceBot;
         }
 
-        public async Task OnRoleCreated(IRole role)
+        public Task OnRoleCreated(IRole role)
         {
-
+            SourceBot.Data.UpdateGuildByRole(role, SourceBot.Log);
+            return Task.CompletedTask;
         }
 
-        internal Task OnRoleUpdated(IRole before, IRole after) => throw new NotImplementedException();
-        internal Task OnRoleDeleted(IRole role) => throw new NotImplementedException();
-        internal Task OnUserUpdated(IUser before, IUser after) => throw new NotImplementedException();
+        internal Task OnRoleUpdated(IRole before, IRole after)
+        {
+            SourceBot.Data.UpdateGuildByRole(after, SourceBot.Log);
+            return Task.CompletedTask;
+        }
+
+        internal Task OnRoleDeleted(IRole role)
+        {
+            SourceBot.Data.UpdateGuildByRole(role, SourceBot.Log);
+            return Task.CompletedTask;
+        }
+
         internal Task OnGuildAvailable(IGuild guild)
         {
             if (!SourceBot.Data.GuildDictionary.ContainsKey(guild.Id))
@@ -33,6 +43,11 @@ namespace P1x3lc0w.DiscordRoleGroupBot
             }
 
             return Task.CompletedTask;
+        }
+
+        internal async Task OnGuildMemberUpdated(IGuildUser before, IGuildUser after) 
+        {
+            //await UserActions.UpdateUserRoles(after, SourceBot.Data, SourceBot.Log);
         }
 
         internal async Task OnLoggedIn()

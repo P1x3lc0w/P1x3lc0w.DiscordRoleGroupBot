@@ -4,6 +4,7 @@ using P1x3lc0w.Extensions;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace P1x3lc0w.DiscordRoleGroupBot.Data
@@ -13,6 +14,29 @@ namespace P1x3lc0w.DiscordRoleGroupBot.Data
         public ConcurrentDictionary<ulong, bool> GroupRoles = new ConcurrentDictionary<ulong, bool>();
         public ConcurrentDictionary<ulong, ulong> MirrorRoles = new ConcurrentDictionary<ulong, ulong>();
         public ConcurrentDictionary<ulong, ulong?> RoleGroups = new ConcurrentDictionary<ulong, ulong?>();
+
+        public HashSet<ulong> GetRoleGroups(IEnumerable<ulong> roleIds)
+        {
+            HashSet<ulong> groups = new HashSet<ulong>();
+            
+            foreach(ulong roleId in roleIds)
+            {
+                if(RoleGroups.TryGetValue(roleId, out ulong? groupRoleId) && groupRoleId.HasValue)
+                {
+                    groups.Add(groupRoleId.Value);
+                }
+            }
+
+            return groups;
+        }
+
+        public IEnumerable<ulong> GetGroups()
+        {
+            foreach (KeyValuePair<ulong, bool> keyValuePair in GroupRoles)
+                if (keyValuePair.Value)
+                    yield return keyValuePair.Key;
+
+        }
 
         public void UpdateRoleGroups(IGuild guild)
         {
@@ -51,6 +75,6 @@ namespace P1x3lc0w.DiscordRoleGroupBot.Data
         public bool IsGroupRole(IRole role)
             => IsGroupRole(role.Id);
         public bool IsGroupRole(ulong roleId)
-            => !(GroupRoles.TryGetValue(roleId, out bool isGroupRole) || isGroupRole);
+            => GroupRoles.TryGetValue(roleId, out bool isGroupRole) || isGroupRole;
     }
 }

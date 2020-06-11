@@ -36,7 +36,7 @@ namespace P1x3lc0w.DiscordRoleGroupBot
             SocketClient.RoleUpdated += BotEventHandler.OnRoleUpdated;
             SocketClient.RoleDeleted += BotEventHandler.OnRoleDeleted;
 
-            SocketClient.UserUpdated += BotEventHandler.OnUserUpdated;
+            SocketClient.GuildMemberUpdated += BotEventHandler.OnGuildMemberUpdated;
 
             ServiceCollection services = new ServiceCollection();
 
