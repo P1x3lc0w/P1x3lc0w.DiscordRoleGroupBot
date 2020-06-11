@@ -14,7 +14,7 @@ namespace P1x3lc0w.DiscordRoleGroupBot
         {
             if(botData.GuildDictionary.TryGetValue(user.Guild.Id, out GuildData guildData))
             {
-                HashSet<ulong> groupIds = guildData.GetRoleGroups(user.RoleIds);
+                HashSet<ulong> groupIds = guildData.GetRoleGroups(user.Guild, user.RoleIds);
 
                 IRole highestGroupRole = null;
                 IList<IRole> rolesToAdd = new List<IRole>();

@@ -47,7 +47,7 @@ namespace P1x3lc0w.DiscordRoleGroupBot
 
         internal async Task OnGuildMemberUpdated(IGuildUser before, IGuildUser after) 
         {
-            //await UserActions.UpdateUserRoles(after, SourceBot.Data, SourceBot.Log);
+            await UserActions.UpdateUserRoles(after, SourceBot.Data, SourceBot.Log);
         }
 
         internal async Task OnLoggedIn()

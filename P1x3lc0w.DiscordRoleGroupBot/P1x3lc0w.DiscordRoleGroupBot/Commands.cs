@@ -68,6 +68,19 @@ namespace P1x3lc0w.DiscordRoleGroupBot
             else await ReplyErrorAsync("Failed to get guild data, try again.");
         }
 
+        [Command("admin config defaultcolorrole")]
+        [RequireUserPermission(GuildPermission.Administrator)]
+        public async Task SetDefaultColorRole(IRole role)
+        {
+            if (SourceBot.Data.GuildDictionary.TryGetValue(Context.Guild.Id, out GuildData guildData))
+            {
+                guildData.DefaultColorRoleId = role.Id;
+
+                await ReplySuccessAsync($"Set default color role to {role.Name} ({role.Id})");
+            }
+            else await ReplyErrorAsync("Failed to get guild data, try again.");
+        }
+
         const int ROLES_PER_PAGE = 30;
 
         [Command("admin debug roleinfos")]
@@ -147,7 +160,7 @@ namespace P1x3lc0w.DiscordRoleGroupBot
         {
             if (SourceBot.Data.GuildDictionary.TryGetValue(Context.Guild.Id, out GuildData guildData))
             {
-                HashSet<ulong> groupIds = guildData.GetRoleGroups(user.RoleIds);
+                HashSet<ulong> groupIds = guildData.GetRoleGroups(user.Guild, user.RoleIds);
 
                 StringBuilder stringBuilder = new StringBuilder();
 
@@ -241,7 +254,10 @@ namespace P1x3lc0w.DiscordRoleGroupBot
 
         [Command("admin save")]
         [RequireUserPermission(GuildPermission.Administrator)]
-        public Task Save()
-            => File.WriteAllTextAsync("savedata.json", JsonConvert.SerializeObject(SourceBot.Data));
+        public async Task Save()
+        { 
+            await File.WriteAllTextAsync("savedata.json", JsonConvert.SerializeObject(SourceBot.Data));
+            await ReplySuccessAsync("Saved.");
+        }
     }
 }

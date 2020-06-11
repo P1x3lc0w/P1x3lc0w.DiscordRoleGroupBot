@@ -57,12 +57,15 @@ namespace P1x3lc0w.DiscordRoleGroupBot.Data
             }
         }
 
-        public HashSet<ulong> GetRoleGroups(IEnumerable<ulong> roleIds)
+        public HashSet<ulong> GetRoleGroups(IGuild guild, IEnumerable<ulong> roleIds)
         {
             HashSet<ulong> groups = new HashSet<ulong>();
 
             foreach (ulong roleId in roleIds)
             {
+                if (roleId == guild.EveryoneRole.Id)
+                    continue;
+
                 if (RoleGroups.TryGetValue(roleId, out ulong? groupRoleId) && groupRoleId.HasValue)
                 {
                     groups.Add(groupRoleId.Value);
@@ -94,7 +97,7 @@ namespace P1x3lc0w.DiscordRoleGroupBot.Data
 
             void UpdateRoleGroup(IRole role)
             {
-                if (IsGroupRole(role)) 
+                if (IsGroupRole(role) || role.Id == role.Guild.EveryoneRole.Id) 
                 {
                     RoleGroups.AddOrUpdate(role.Id, null);
                 }
