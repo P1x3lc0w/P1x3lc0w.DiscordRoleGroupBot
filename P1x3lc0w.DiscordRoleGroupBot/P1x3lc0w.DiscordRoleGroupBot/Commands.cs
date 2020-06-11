@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
+using Newtonsoft.Json;
 using P1x3lc0w.DiscordRoleGroupBot.Data;
 using P1x3lc0w.Extensions;
 using System;
@@ -22,6 +23,19 @@ namespace P1x3lc0w.DiscordRoleGroupBot
 
         private Task ReplyInfoAsync(string text)
             => ReplyAsync($":information_source: {text}");
+
+        [Command("admin config role addall")]
+        [RequireUserPermission(GuildPermission.Administrator)]
+        public async Task AddAllGroupRoles(string prefix)
+        {
+            foreach (IRole role in Context.Guild.Roles)
+            {
+                if (role.Name.TrimStart().StartsWith(prefix))
+                {
+                    await AddGroupRole(role);
+                }
+            }
+        }
 
         [Command("admin config role add")]
         [RequireUserPermission(GuildPermission.Administrator)]
@@ -88,23 +102,29 @@ namespace P1x3lc0w.DiscordRoleGroupBot
                         {
                             stringBuilder.Append("[GROUP] ");
                             stringBuilder.Append(role.Name);
+                            stringBuilder.Append(" (");
+                            stringBuilder.Append(role.Id);
+                            stringBuilder.Append(")");
                         }
                         else
                         {
                             stringBuilder.Append("        ");
                             stringBuilder.Append(role.Name);
-                            stringBuilder.Append(' ');
+                            stringBuilder.Append(" (");
+                            stringBuilder.Append(role.Id);
 
                             if (guildData.RoleGroups.TryGetValue(role.Id, out ulong? groupRoleId) && groupRoleId.HasValue)
                             {
                                 IRole groupRole = Context.Guild.GetRole(groupRoleId.Value);
-                                stringBuilder.Append("Group:");
+                                stringBuilder.Append("; Group:");
                                 stringBuilder.Append(groupRole.Name);
                             }
                             else
                             {
-                                stringBuilder.Append("(No Group)");
+                                stringBuilder.Append("; No Group");
                             }
+
+                            stringBuilder.Append(")");
                         }
 
                         stringBuilder.Append('\n');
@@ -119,6 +139,40 @@ namespace P1x3lc0w.DiscordRoleGroupBot
             }
             else await ReplyErrorAsync("Failed to get guild data, try again.");
         }
+
+        [Command("admin debug usergroups")]
+        [RequireUserPermission(GuildPermission.Administrator)]
+        public async Task DumpUserRoleGroups(IGuildUser user)
+        {
+            if (SourceBot.Data.GuildDictionary.TryGetValue(Context.Guild.Id, out GuildData guildData))
+            {
+                HashSet<ulong> groupIds = guildData.GetRoleGroups(user.RoleIds);
+
+                StringBuilder stringBuilder = new StringBuilder();
+
+                stringBuilder.Append("```\n");
+
+                foreach(ulong groupId in groupIds)
+                {
+                    IRole groupRole = Context.Guild.GetRole(groupId);
+
+                    stringBuilder.Append(groupRole.Name);
+                    stringBuilder.Append(" (");
+                    stringBuilder.Append(groupRole.Id);
+                    stringBuilder.Append(")\n");
+                }
+
+                stringBuilder.Append("```");
+
+                await ReplyAsync(stringBuilder.ToString());
+            }
+            else await ReplyErrorAsync("Failed to get guild data, try again.");
+        }
+
+        [Command("admin debug data")]
+        [RequireUserPermission(GuildPermission.Administrator)]
+        public Task DumpData() 
+            => ReplyAsync($"```{JsonConvert.SerializeObject(SourceBot.Data)}```");
 
         [Command("admin user update")]
         [RequireUserPermission(GuildPermission.Administrator)]
