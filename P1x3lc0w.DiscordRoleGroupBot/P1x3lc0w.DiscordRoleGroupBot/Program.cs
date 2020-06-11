@@ -7,7 +7,7 @@ namespace P1x3lc0w.DiscordRoleGroupBot
     {
         static void Main(string[] args)
         {
-            _ = new Bot().StartBot(args[0]);
+            _ = new Bot().StartBot();
             Thread.Sleep(Timeout.Infinite);
         }
     }

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace P1x3lc0w.DiscordRoleGroupBot
 {
-    public class Commands : ModuleBase<SocketCommandContext>
+    public class Commands : ModuleBase<ICommandContext>
     {
         public Bot SourceBot { get; set; }
 
@@ -46,6 +46,8 @@ namespace P1x3lc0w.DiscordRoleGroupBot
                 {
                     await ReplyInfoAsync($"Role {role.Name} is already {(value ? "" : "not ")}a group role.");
                 }
+
+                guildData.UpdateRoleGroups(Context.Guild);
             }
             else await ReplyErrorAsync("Failed to get guild data, try again.");
         } 
