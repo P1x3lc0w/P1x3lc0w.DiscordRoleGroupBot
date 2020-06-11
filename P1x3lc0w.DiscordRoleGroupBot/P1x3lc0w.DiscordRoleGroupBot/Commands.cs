@@ -5,6 +5,7 @@ using P1x3lc0w.DiscordRoleGroupBot.Data;
 using P1x3lc0w.Extensions;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -174,6 +175,45 @@ namespace P1x3lc0w.DiscordRoleGroupBot
         public Task DumpData() 
             => ReplyAsync($"```{JsonConvert.SerializeObject(SourceBot.Data)}```");
 
+        [Command("admin user updateall")]
+        [RequireUserPermission(GuildPermission.Administrator)]
+        public async Task UpdateAllUsers()
+        {
+            IReadOnlyCollection<IGuildUser> users = await Context.Guild.GetUsersAsync();
+
+            int counter = 0;
+
+            foreach (IGuildUser user in users)
+            {
+                if(counter % 10 == 0)
+                {
+                    await ReplyInfoAsync($"Updating users ({counter}/{users.Count})");
+                    await Task.Delay(TimeSpan.FromSeconds(10));
+                }
+
+                await UserActions.UpdateUserRoles(user, SourceBot.Data,
+                    async (msg) =>
+                    {
+                        switch (msg.Severity)
+                        {
+                            case LogSeverity.Critical:
+                            case LogSeverity.Error:
+                                await ReplyErrorAsync(msg.Message);
+                                break;
+
+                            default:
+                                await ReplyInfoAsync(msg.Message);
+                                break;
+                        }
+                    }
+                );
+
+                counter++;
+            }
+
+            await ReplyInfoAsync("Updated all users.");
+        }
+
         [Command("admin user update")]
         [RequireUserPermission(GuildPermission.Administrator)]
         public async Task UpdateUser(IGuildUser user)
@@ -197,5 +237,11 @@ namespace P1x3lc0w.DiscordRoleGroupBot
 
             await ReplyInfoAsync("User update started.");
         }
+
+
+        [Command("admin save")]
+        [RequireUserPermission(GuildPermission.Administrator)]
+        public Task Save()
+            => File.WriteAllTextAsync("savedata.json", JsonConvert.SerializeObject(SourceBot.Data));
     }
 }
