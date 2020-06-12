@@ -13,13 +13,21 @@ namespace P1x3lc0w.DiscordRoleGroupBot.Data
 
         public void UpdateGuildByRole(IRole role, Func<LogMessage, Task> log = null)
         {
-            if (GuildDictionary.TryGetValue(role.Guild.Id, out GuildData guildData))
+            try
             {
-                guildData.UpdateRoleGroups(role.Guild);
+                if (GuildDictionary.TryGetValue(role.Guild.Id, out GuildData guildData))
+                {
+                    guildData.UpdateGroupRoles(role.Guild);
+                    guildData.UpdateRoleGroups(role.Guild);
+                }
+                else
+                {
+                    log?.Invoke(new LogMessage(LogSeverity.Error, nameof(UpdateGuildByRole), $"Failed to get guild data while updating guild by role {role.Name} ({role.Id})."));
+                }
             }
-            else
+            catch(Exception e)
             {
-                log?.Invoke(new LogMessage(LogSeverity.Error, nameof(UpdateGuildByRole), $"Failed to get guild data while updating guild by role {role.Name} ({role.Id})."));
+                log?.Invoke(new LogMessage(LogSeverity.Error, nameof(UpdateGuildByRole), $"Exception while updating guild {e.GetType().FullName}: {e.Message}\n{e.StackTrace}"));
             }
         }
     }

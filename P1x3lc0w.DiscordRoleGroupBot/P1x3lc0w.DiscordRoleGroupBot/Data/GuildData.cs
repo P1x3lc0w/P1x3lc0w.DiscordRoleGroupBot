@@ -12,7 +12,7 @@ namespace P1x3lc0w.DiscordRoleGroupBot.Data
     internal class GuildData
     {
         public ConcurrentDictionary<ulong, bool> GroupRoles { get; set; } = new ConcurrentDictionary<ulong, bool>();
-        public ConcurrentDictionary<ulong, ulong> MirrorRoles { get; set; } = new ConcurrentDictionary<ulong, ulong>();
+        public ConcurrentDictionary<ulong, ulong?> MirrorRoles { get; set; } = new ConcurrentDictionary<ulong, ulong?>();
         public ConcurrentDictionary<ulong, ulong?> RoleGroups { get; set; } = new ConcurrentDictionary<ulong, ulong?>();
         public ulong DefaultColorRoleId { get; set; }
 
@@ -29,15 +29,44 @@ namespace P1x3lc0w.DiscordRoleGroupBot.Data
 
         public async Task<IRole> GetOrCreateMirrorRole(IGuild guild, IRole role)
         {
-            if(MirrorRoles.TryGetValue(role.Id, out ulong mirrorRoleId))
+            if(MirrorRoles.TryGetValue(role.Id, out ulong? mirrorRoleId) && mirrorRoleId.HasValue)
             {
-                return guild.GetRole(mirrorRoleId);
+                IRole mirrorRole = guild.GetRole(mirrorRoleId.Value);
+
+                if(mirrorRole == null)
+                {
+                    MirrorRoles.TryUpdate(role.Id, null, mirrorRoleId);
+                    return await GetOrCreateMirrorRole(guild, role);
+                }
+                else
+                {
+                    return mirrorRole;
+                }
             }
             else
             {
                 IRole mirrorRole = await guild.CreateRoleAsync("▸" + role.Name, GuildPermissions.None, role.Color, false, null);
-                
-                if(MirrorRoles.TryAdd(role.Id, mirrorRole.Id))
+
+                bool updateFailed = false;
+
+                MirrorRoles.AddOrUpdate(
+                        role.Id,
+                        (roleId) => mirrorRole.Id,
+                        (roleId, previouisValue) =>
+                        {
+                            if (previouisValue.HasValue)
+                            {
+                                updateFailed = true;
+                                return previouisValue;
+                            }
+                            else
+                            {
+                                return mirrorRole.Id;
+                            }
+                        }
+                    );
+
+                if(!updateFailed)
                 {
                     await mirrorRole.ModifyAsync(
                             (roleProperties) =>
@@ -50,8 +79,6 @@ namespace P1x3lc0w.DiscordRoleGroupBot.Data
                 }
                 else
                 {
-                    await mirrorRole.DeleteAsync();
-                    await Task.Delay(TimeSpan.FromSeconds(1));
                     return await GetOrCreateMirrorRole(guild, role);
                 }
             }
@@ -80,6 +107,13 @@ namespace P1x3lc0w.DiscordRoleGroupBot.Data
             foreach (KeyValuePair<ulong, bool> keyValuePair in GroupRoles)
                 if (keyValuePair.Value)
                     yield return keyValuePair.Key;
+        }
+
+        public IEnumerable<ulong> GetMirrorRoles()
+        {
+            foreach (KeyValuePair<ulong, ulong?> keyValuePair in MirrorRoles)
+                if(keyValuePair.Value.HasValue)
+                    yield return keyValuePair.Value.Value;
         }
 
         public void UpdateRoleGroups(IGuild guild)
@@ -118,6 +152,17 @@ namespace P1x3lc0w.DiscordRoleGroupBot.Data
 
             foreach (IRole role in guild.Roles)
                 UpdateRoleGroup(role);
+        }
+
+        public void UpdateGroupRoles(IGuild guild)
+        {
+            foreach (KeyValuePair<ulong, bool> keyValuePair in GroupRoles)
+            {
+                if(guild.GetRole(keyValuePair.Key) == null)
+                {
+                    GroupRoles.TryRemove(keyValuePair.Key, out _);
+                }
+            }    
         }
 
         public bool IsGroupRole(IRole role)

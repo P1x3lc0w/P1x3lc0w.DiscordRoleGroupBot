@@ -28,6 +28,8 @@ namespace P1x3lc0w.DiscordRoleGroupBot
                     IList<IRole> rolesToAdd = new List<IRole>();
                     IList<IRole> rolesToRemove = new List<IRole>();
 
+                    IReadOnlyCollection<ulong> userRoleIds = user.RoleIds;
+
                     foreach (ulong groupId in guildData.GetGroups())
                     {
                         if (groupIds.Contains(groupId))
@@ -40,32 +42,29 @@ namespace P1x3lc0w.DiscordRoleGroupBot
                                 highestGroupRole = groupRole;
                             }
 
-                            if (!user.RoleIds.Contains(groupId))
+                            if (!userRoleIds.Contains(groupId))
                                 rolesToAdd.Add(groupRole);
                         }
                         else
                         {
                             //User does not have role in group
-                            if (user.RoleIds.Contains(groupId))
+                            if (userRoleIds.Contains(groupId))
                                 rolesToRemove.Add(user.Guild.GetRole(groupId));
                         }
                     }
 
-                    if (rolesToAdd.Count > 0)
-                        await user.AddRolesAsync(rolesToAdd);
-
-                    if (rolesToRemove.Count > 0)
-                        await user.RemoveRolesAsync(rolesToRemove);
+                    IRole userMirrorRole = null;
+                    IRole highestColorRole = null;
 
                     if (highestGroupRole != null)
                     {
-                        IRole highestColorRole = (from ulong roleId in user.RoleIds
-                                                  where !groupIds.Contains(roleId)
-                                                  let role = user.Guild.GetRole(roleId)
-                                                  where role.Color != Color.Default
-                                                  orderby role.Position descending
-                                                  select role)
-                                                  .FirstOrDefault();
+                        highestColorRole = (from ulong roleId in userRoleIds
+                                            where !groupIds.Contains(roleId)
+                                            let role = user.Guild.GetRole(roleId)
+                                            where role.Color != Color.Default
+                                            orderby role.Position descending
+                                            select role)
+                                            .FirstOrDefault();
 
                         if (highestColorRole == null)
                         {
@@ -73,14 +72,37 @@ namespace P1x3lc0w.DiscordRoleGroupBot
 
                             if (DefaultCololRole != null)
                             {
-                                await user.AddRoleAsync(DefaultCololRole);
+                                userMirrorRole = DefaultCololRole;
                             }
                         }
                         else if (highestColorRole.Position < highestGroupRole.Position)
                         {
-                            await user.AddRoleAsync(await guildData.GetOrCreateMirrorRole(user.Guild, highestColorRole));
+                            userMirrorRole = await guildData.GetOrCreateMirrorRole(user.Guild, highestColorRole);
                         }
+
+                        if(userMirrorRole != null)
+                            if (!userRoleIds.Contains(userMirrorRole.Id))
+                                rolesToAdd.Add(userMirrorRole);
                     }
+
+                    foreach (ulong mirrorRoleId in guildData.GetMirrorRoles())
+                        if(highestColorRole == null || mirrorRoleId != highestColorRole.Id)
+                            if (userMirrorRole == null || mirrorRoleId != userMirrorRole.Id)
+                                if (userRoleIds.Contains(mirrorRoleId))
+                                {
+                                    IRole mirrorRole = user.Guild.GetRole(mirrorRoleId);
+
+                                    if(mirrorRole != null)
+                                    {
+                                        rolesToRemove.Add(mirrorRole);
+                                    }
+                                }
+
+                    if (rolesToAdd.Count > 0)
+                        await user.AddRolesAsync(rolesToAdd);
+
+                    if (rolesToRemove.Count > 0)
+                        await user.RemoveRolesAsync(rolesToRemove);
                 }
                 else
                 {

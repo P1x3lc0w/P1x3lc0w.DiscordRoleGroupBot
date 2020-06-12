@@ -75,7 +75,11 @@ namespace P1x3lc0w.DiscordRoleGroupBot
             {
                 while (true)
                 {
-                    await Task.Delay(TimeSpan.FromMinutes(30));
+                    await Task.Delay(TimeSpan.FromHours(5));
+
+                    if(File.Exists("savedata.json"))
+                        File.Move("savedata.json", "savedata.old.josn", true);                    
+
                     await File.WriteAllTextAsync("savedata.json", JsonConvert.SerializeObject(Data));
                 }
             });
