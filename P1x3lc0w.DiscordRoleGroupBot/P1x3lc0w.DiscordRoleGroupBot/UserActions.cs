@@ -53,13 +53,14 @@ namespace P1x3lc0w.DiscordRoleGroupBot
                         }
                     }
 
+                    IList<ulong> guildMirrorRoleIds = guildData.GetMirrorRoles().ToList();
                     IRole userMirrorRole = null;
                     IRole highestColorRole = null;
 
                     if (highestGroupRole != null)
                     {
                         highestColorRole = (from ulong roleId in userRoleIds
-                                            where !groupIds.Contains(roleId)
+                                            where !groupIds.Contains(roleId) && !guildMirrorRoleIds.Contains(roleId)
                                             let role = user.Guild.GetRole(roleId)
                                             where role.Color != Color.Default
                                             orderby role.Position descending
@@ -80,12 +81,14 @@ namespace P1x3lc0w.DiscordRoleGroupBot
                             userMirrorRole = await guildData.GetOrCreateMirrorRole(user.Guild, highestColorRole);
                         }
 
-                        if(userMirrorRole != null)
+                        if (userMirrorRole != null)
+                        {
                             if (!userRoleIds.Contains(userMirrorRole.Id))
                                 rolesToAdd.Add(userMirrorRole);
+                        }
                     }
 
-                    foreach (ulong mirrorRoleId in guildData.GetMirrorRoles())
+                    foreach (ulong mirrorRoleId in guildMirrorRoleIds)
                         if(highestColorRole == null || mirrorRoleId != highestColorRole.Id)
                             if (userMirrorRole == null || mirrorRoleId != userMirrorRole.Id)
                                 if (userRoleIds.Contains(mirrorRoleId))
