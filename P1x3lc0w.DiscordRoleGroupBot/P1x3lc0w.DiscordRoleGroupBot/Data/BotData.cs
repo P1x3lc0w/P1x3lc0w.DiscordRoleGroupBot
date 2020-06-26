@@ -1,13 +1,11 @@
 ﻿using Discord;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace P1x3lc0w.DiscordRoleGroupBot.Data
 {
-    class BotData
+    internal class BotData
     {
         public ConcurrentDictionary<ulong, GuildData> GuildDictionary = new ConcurrentDictionary<ulong, GuildData>();
 
@@ -25,7 +23,7 @@ namespace P1x3lc0w.DiscordRoleGroupBot.Data
                     log?.Invoke(new LogMessage(LogSeverity.Error, nameof(UpdateGuildByRole), $"Failed to get guild data while updating guild by role {role.Name} ({role.Id})."));
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 log?.Invoke(new LogMessage(LogSeverity.Error, nameof(UpdateGuildByRole), $"Exception while updating guild {e.GetType().FullName}: {e.Message}\n{e.StackTrace}"));
             }

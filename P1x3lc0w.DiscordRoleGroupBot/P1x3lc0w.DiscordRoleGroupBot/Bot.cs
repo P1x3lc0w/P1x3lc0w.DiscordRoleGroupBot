@@ -2,13 +2,10 @@
 using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Newtonsoft.Json;
 using P1x3lc0w.DiscordRoleGroupBot.Data;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace P1x3lc0w.DiscordRoleGroupBot
@@ -56,7 +53,7 @@ namespace P1x3lc0w.DiscordRoleGroupBot
             _ = provider.GetRequiredService<CommandHandler>().InstallCommandsAsync();
         }
 
-        private void CreateOrLoadData() 
+        private void CreateOrLoadData()
         {
 #if DEBUG
             _config = BotConfig.LoadConfigFromFile("botconfig.DEBUG.json");
@@ -68,6 +65,7 @@ namespace P1x3lc0w.DiscordRoleGroupBot
                 JsonConvert.DeserializeObject<BotData>(File.ReadAllText("savedata.json")) :
                 new BotData();
         }
+
         public Task StartBot()
         {
             SocketClient.LoginAsync(TokenType.Bot, _config.token);
@@ -77,8 +75,8 @@ namespace P1x3lc0w.DiscordRoleGroupBot
                 {
                     await Task.Delay(TimeSpan.FromHours(5));
 
-                    if(File.Exists("savedata.json"))
-                        File.Move("savedata.json", "savedata.old.josn", true);                    
+                    if (File.Exists("savedata.json"))
+                        File.Move("savedata.json", "savedata.old.josn", true);
 
                     await File.WriteAllTextAsync("savedata.json", JsonConvert.SerializeObject(Data));
                 }

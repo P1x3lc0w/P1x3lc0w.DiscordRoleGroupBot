@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using System.IO;
-using System.Security;
 
 namespace P1x3lc0w.DiscordRoleGroupBot.Data
 {

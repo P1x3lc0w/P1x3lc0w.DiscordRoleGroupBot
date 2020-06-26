@@ -1,14 +1,10 @@
 ﻿using Discord;
-using Discord.WebSocket;
 using P1x3lc0w.DiscordRoleGroupBot.Data;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace P1x3lc0w.DiscordRoleGroupBot
 {
-    class BotEventHandler
+    internal class BotEventHandler
     {
         public Bot SourceBot { get; private set; }
 
@@ -47,9 +43,9 @@ namespace P1x3lc0w.DiscordRoleGroupBot
             return Task.CompletedTask;
         }
 
-        internal async Task OnGuildMemberUpdated(IGuildUser before, IGuildUser after) 
+        internal async Task OnGuildMemberUpdated(IGuildUser before, IGuildUser after)
         {
-            if(!DisableUserUpdate)
+            if (!DisableUserUpdate)
                 await UserActions.UpdateUserRoles(after, SourceBot.Data, SourceBot.Log);
         }
 

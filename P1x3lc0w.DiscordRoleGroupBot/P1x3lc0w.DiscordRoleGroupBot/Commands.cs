@@ -25,6 +25,10 @@ namespace P1x3lc0w.DiscordRoleGroupBot
         private Task ReplyInfoAsync(string text)
             => ReplyAsync($":information_source: {text}");
 
+        /// <summary>
+        /// Adds all roles with a certain prefix as group roles.
+        /// </summary>
+        /// <param name="prefix">The prefix to filter by.</param>
         [Command("admin config role addall")]
         [RequireUserPermission(GuildPermission.Administrator)]
         public async Task AddAllGroupRoles(string prefix)
@@ -38,16 +42,29 @@ namespace P1x3lc0w.DiscordRoleGroupBot
             }
         }
 
+        /// <summary>
+        /// Add a role as a group role.
+        /// </summary>
+        /// <param name="role">The role to be added as a group role.</param>
         [Command("admin config role add")]
         [RequireUserPermission(GuildPermission.Administrator)]
         public Task AddGroupRole(IRole role)
             => SetGroupRoleAsync(role, true);
 
+        /// <summary>
+        /// Removes a role as a group role.
+        /// </summary>
+        /// <param name="role">The role to be removed as a group role.</param>
         [Command("admin config role remove")]
         [RequireUserPermission(GuildPermission.Administrator)]
         public Task RemoveGroupRole(IRole role)
             => SetGroupRoleAsync(role, false);
 
+        /// <summary>
+        /// Sets weather or not a role should be a group role.
+        /// </summary>
+        /// <param name="role">The role to be set or removed as a group role.</param>
+        /// <param name="value">Weather or not the role should be a group role.</param>
         [Command("admin config role set")]
         [RequireUserPermission(GuildPermission.Administrator)]
         public async Task SetGroupRoleAsync(IRole role, bool value)
@@ -68,6 +85,10 @@ namespace P1x3lc0w.DiscordRoleGroupBot
             else await ReplyErrorAsync("Failed to get guild data, try again.");
         }
 
+        /// <summary>
+        /// Sets the role to be used as a mirror role if the user does not have a color.
+        /// </summary>
+        /// <param name="role">The role to be used as a mirror role if the user does not have a color.</param>
         [Command("admin config defaultcolorrole")]
         [RequireUserPermission(GuildPermission.Administrator)]
         public async Task SetDefaultColorRole(IRole role)
@@ -81,8 +102,11 @@ namespace P1x3lc0w.DiscordRoleGroupBot
             else await ReplyErrorAsync("Failed to get guild data, try again.");
         }
 
-        const int ROLES_PER_PAGE = 30;
+        private const int ROLES_PER_PAGE = 30;
 
+        /// <summary>
+        /// Dumps information about all roles.
+        /// </summary>
         [Command("admin debug roleinfos")]
         [RequireUserPermission(GuildPermission.Administrator)]
         public async Task DumpRoleInfos()
@@ -90,7 +114,6 @@ namespace P1x3lc0w.DiscordRoleGroupBot
             if (SourceBot.Data.GuildDictionary.TryGetValue(Context.Guild.Id, out GuildData guildData))
             {
                 int lastPage = Context.Guild.Roles.Count / ROLES_PER_PAGE;
-
 
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.Append(":information_source: Role Information:\n");
@@ -154,6 +177,9 @@ namespace P1x3lc0w.DiscordRoleGroupBot
             else await ReplyErrorAsync("Failed to get guild data, try again.");
         }
 
+        /// <summary>
+        /// Dumps information about the role groups of a user.
+        /// </summary>
         [Command("admin debug usergroups")]
         [RequireUserPermission(GuildPermission.Administrator)]
         public async Task DumpUserRoleGroups(IGuildUser user)
@@ -166,7 +192,7 @@ namespace P1x3lc0w.DiscordRoleGroupBot
 
                 stringBuilder.Append("```\n");
 
-                foreach(ulong groupId in groupIds)
+                foreach (ulong groupId in groupIds)
                 {
                     IRole groupRole = Context.Guild.GetRole(groupId);
 
@@ -183,11 +209,18 @@ namespace P1x3lc0w.DiscordRoleGroupBot
             else await ReplyErrorAsync("Failed to get guild data, try again.");
         }
 
+        /// <summary>
+        /// Dumps bot data.
+        /// </summary>
+        /// <returns></returns>
         [Command("admin debug data")]
         [RequireUserPermission(GuildPermission.Administrator)]
-        public Task DumpData() 
+        public Task DumpData()
             => ReplyAsync($"```{JsonConvert.SerializeObject(SourceBot.Data)}```");
 
+        /// <summary>
+        /// Forces an update for all users.
+        /// </summary>
         [Command("admin user updateall")]
         [RequireUserPermission(GuildPermission.Administrator)]
         public async Task UpdateAllUsers()
@@ -200,7 +233,7 @@ namespace P1x3lc0w.DiscordRoleGroupBot
 
             foreach (IGuildUser user in users)
             {
-                if(counter % 10 == 0)
+                if (counter % 10 == 0)
                 {
                     await ReplyInfoAsync($"Updating users ({counter}/{users.Count})");
                     await Task.Delay(TimeSpan.FromSeconds(10));
@@ -230,6 +263,10 @@ namespace P1x3lc0w.DiscordRoleGroupBot
             SourceBot.BotEventHandler.DisableUserUpdate = false;
         }
 
+        /// <summary>
+        /// Forces an update for a user.
+        /// </summary>
+        /// <param name="user">The user to be updated.</param>
         [Command("admin user update")]
         [RequireUserPermission(GuildPermission.Administrator)]
         public async Task UpdateUser(IGuildUser user)
@@ -254,11 +291,14 @@ namespace P1x3lc0w.DiscordRoleGroupBot
             await ReplyInfoAsync("User update started.");
         }
 
-
+        /// <summary>
+        /// Saves the bot's data.
+        /// </summary>
+        /// <returns></returns>
         [Command("admin save")]
         [RequireUserPermission(GuildPermission.Administrator)]
         public async Task Save()
-        { 
+        {
             await File.WriteAllTextAsync("savedata.json", JsonConvert.SerializeObject(SourceBot.Data));
             await ReplySuccessAsync("Saved.");
         }

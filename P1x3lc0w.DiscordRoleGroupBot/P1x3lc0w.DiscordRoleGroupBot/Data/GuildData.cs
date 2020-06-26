@@ -1,7 +1,6 @@
 ﻿using Discord;
 using P1x3lc0w.Common;
 using P1x3lc0w.Extensions;
-using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +18,7 @@ namespace P1x3lc0w.DiscordRoleGroupBot.Data
         public IRole GetDefaultColorRole(IGuild guild)
             => guild.GetRole(DefaultColorRoleId);
 
-        public int GetMirrorRolePosition(IGuild guild) 
+        public int GetMirrorRolePosition(IGuild guild)
             => (from keyValue in GroupRoles
                 where keyValue.Value
                 let role = guild.GetRole(keyValue.Key)
@@ -29,11 +28,11 @@ namespace P1x3lc0w.DiscordRoleGroupBot.Data
 
         public async Task<IRole> GetOrCreateMirrorRole(IGuild guild, IRole role)
         {
-            if(MirrorRoles.TryGetValue(role.Id, out ulong? mirrorRoleId) && mirrorRoleId.HasValue)
+            if (MirrorRoles.TryGetValue(role.Id, out ulong? mirrorRoleId) && mirrorRoleId.HasValue)
             {
                 IRole mirrorRole = guild.GetRole(mirrorRoleId.Value);
 
-                if(mirrorRole == null)
+                if (mirrorRole == null)
                 {
                     MirrorRoles.TryUpdate(role.Id, null, mirrorRoleId);
                     return await GetOrCreateMirrorRole(guild, role);
@@ -66,7 +65,7 @@ namespace P1x3lc0w.DiscordRoleGroupBot.Data
                         }
                     );
 
-                if(!updateFailed)
+                if (!updateFailed)
                 {
                     await mirrorRole.ModifyAsync(
                             (roleProperties) =>
@@ -112,7 +111,7 @@ namespace P1x3lc0w.DiscordRoleGroupBot.Data
         public IEnumerable<ulong> GetMirrorRoles()
         {
             foreach (KeyValuePair<ulong, ulong?> keyValuePair in MirrorRoles)
-                if(keyValuePair.Value.HasValue)
+                if (keyValuePair.Value.HasValue)
                     yield return keyValuePair.Value.Value;
         }
 
@@ -131,7 +130,7 @@ namespace P1x3lc0w.DiscordRoleGroupBot.Data
 
             void UpdateRoleGroup(IRole role)
             {
-                if (IsGroupRole(role) || role.Id == role.Guild.EveryoneRole.Id) 
+                if (IsGroupRole(role) || role.Id == role.Guild.EveryoneRole.Id)
                 {
                     RoleGroups.AddOrUpdate(role.Id, null);
                 }
@@ -158,11 +157,11 @@ namespace P1x3lc0w.DiscordRoleGroupBot.Data
         {
             foreach (KeyValuePair<ulong, bool> keyValuePair in GroupRoles)
             {
-                if(guild.GetRole(keyValuePair.Key) == null)
+                if (guild.GetRole(keyValuePair.Key) == null)
                 {
                     GroupRoles.TryRemove(keyValuePair.Key, out _);
                 }
-            }    
+            }
         }
 
         public bool IsGroupRole(IRole role)
