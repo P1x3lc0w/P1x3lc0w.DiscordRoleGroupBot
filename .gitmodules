@@ -1,0 +1,6 @@
+[submodule "Submodules/P1x3lc0w.Extensions"]
+	path = Submodules/P1x3lc0w.Extensions
+	url = https://github.com/P1x3lc0w/P1x3lc0w.Extensions
+[submodule "Submodules/P1x3lc0w.Common"]
+	path = Submodules/P1x3lc0w.Common
+	url = https://github.com/P1x3lc0w/P1x3lc0w.Common

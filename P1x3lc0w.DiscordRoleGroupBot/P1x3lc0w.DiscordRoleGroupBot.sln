@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "P1x3lc0w.DiscordRoleGroupBot", "P1x3lc0w.DiscordRoleGroupBot\P1x3lc0w.DiscordRoleGroupBot.csproj", "{A4181D7B-2696-499C-986C-FBA5B6102028}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "P1x3lc0w.DiscordRoleGroupBot", "P1x3lc0w.DiscordRoleGroupBot\P1x3lc0w.DiscordRoleGroupBot.csproj", "{A4181D7B-2696-499C-986C-FBA5B6102028}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "P1x3lc0w.Extensions", "..\..\P1x3lc0w.Extensions\P1x3lc0w.Extensions\P1x3lc0w.Extensions.csproj", "{20F8CAC5-4E95-4525-8819-9CB01DC190CB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "P1x3lc0w.Common", "..\Submodules\P1x3lc0w.Common\P1x3lc0w.Common\P1x3lc0w.Common.csproj", "{D4EE9B97-1CEA-4C1A-8944-C4C5427DF80E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "P1x3lc0w.Common", "..\..\P1x3lc0w.Common\P1x3lc0w.Common\P1x3lc0w.Common.csproj", "{230CBC72-5967-4A76-A905-6C2B7C726657}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "P1x3lc0w.Extensions", "..\Submodules\P1x3lc0w.Extensions\P1x3lc0w.Extensions\P1x3lc0w.Extensions.csproj", "{23A5F22A-CFF9-4A20-B135-C2520522566F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,14 +19,14 @@ Global
 		{A4181D7B-2696-499C-986C-FBA5B6102028}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A4181D7B-2696-499C-986C-FBA5B6102028}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A4181D7B-2696-499C-986C-FBA5B6102028}.Release|Any CPU.Build.0 = Release|Any CPU
-		{20F8CAC5-4E95-4525-8819-9CB01DC190CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{20F8CAC5-4E95-4525-8819-9CB01DC190CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{20F8CAC5-4E95-4525-8819-9CB01DC190CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{20F8CAC5-4E95-4525-8819-9CB01DC190CB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{230CBC72-5967-4A76-A905-6C2B7C726657}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{230CBC72-5967-4A76-A905-6C2B7C726657}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{230CBC72-5967-4A76-A905-6C2B7C726657}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{230CBC72-5967-4A76-A905-6C2B7C726657}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4EE9B97-1CEA-4C1A-8944-C4C5427DF80E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4EE9B97-1CEA-4C1A-8944-C4C5427DF80E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4EE9B97-1CEA-4C1A-8944-C4C5427DF80E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4EE9B97-1CEA-4C1A-8944-C4C5427DF80E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23A5F22A-CFF9-4A20-B135-C2520522566F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23A5F22A-CFF9-4A20-B135-C2520522566F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23A5F22A-CFF9-4A20-B135-C2520522566F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23A5F22A-CFF9-4A20-B135-C2520522566F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

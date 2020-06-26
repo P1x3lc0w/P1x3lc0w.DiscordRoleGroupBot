@@ -12,8 +12,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\P1x3lc0w.Common\P1x3lc0w.Common\P1x3lc0w.Common.csproj" />
-    <ProjectReference Include="..\..\..\P1x3lc0w.Extensions\P1x3lc0w.Extensions\P1x3lc0w.Extensions.csproj" />
+    <ProjectReference Include="..\..\Submodules\P1x3lc0w.Common\P1x3lc0w.Common\P1x3lc0w.Common.csproj" />
+    <ProjectReference Include="..\..\Submodules\P1x3lc0w.Extensions\P1x3lc0w.Extensions\P1x3lc0w.Extensions.csproj" />
   </ItemGroup>
 
   <ItemGroup>
