@@ -299,8 +299,15 @@ namespace P1x3lc0w.DiscordRoleGroupBot
         [RequireUserPermission(GuildPermission.Administrator)]
         public async Task Save()
         {
-            await File.WriteAllTextAsync("savedata.json", JsonConvert.SerializeObject(SourceBot.Data));
-            await ReplySuccessAsync("Saved.");
+            if (SourceBot.BotConfig.IsAdministrator(Context.User))
+            {
+                await File.WriteAllTextAsync("savedata.json", JsonConvert.SerializeObject(SourceBot.Data));
+                await ReplySuccessAsync("Saved.");
+            }
+            else
+            {
+                await ReplyErrorAsync($"Sorry {Context.User.Mention}, only bot administrators are allowed to use this command.");
+            }
         }
     }
 }

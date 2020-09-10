@@ -16,7 +16,7 @@ namespace P1x3lc0w.DiscordRoleGroupBot
         internal BotEventHandler BotEventHandler { get; private set; }
 
         internal BotData Data { get; private set; }
-        private BotConfig _config;
+        internal BotConfig BotConfig { get; private set; }
 
         public Bot()
         {
@@ -56,9 +56,9 @@ namespace P1x3lc0w.DiscordRoleGroupBot
         private void CreateOrLoadData()
         {
 #if DEBUG
-            _config = BotConfig.LoadConfigFromFile("botconfig.DEBUG.json");
+            BotConfig = BotConfig.ReadConfigFromFile("botconfig.DEBUG.json");
 #else
-            _config = BotConfig.LoadConfigFromFile("botconfig.json");
+            BotConfig = BotConfig.ReadConfigFromFile("botconfig.json");
 #endif
 
             Data = File.Exists("savedata.json") ?
@@ -68,7 +68,7 @@ namespace P1x3lc0w.DiscordRoleGroupBot
 
         public Task StartBot()
         {
-            SocketClient.LoginAsync(TokenType.Bot, _config.token);
+            SocketClient.LoginAsync(TokenType.Bot, BotConfig.token);
             return Task.Run(async () =>
             {
                 while (true)

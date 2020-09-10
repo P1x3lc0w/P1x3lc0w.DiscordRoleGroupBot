@@ -5,9 +5,19 @@ namespace P1x3lc0w.DiscordRoleGroupBot.Data
 {
     public struct BotConfig
     {
-        public string token;
+        public readonly string token;
+        public readonly ulong[] administrators;
 
-        public static BotConfig LoadConfigFromFile(string filePath)
+        public BotConfig(string token, ulong[] administrators)
+        {
+            this.token = token;
+            this.administrators = administrators;
+        }
+
+        public static BotConfig ReadConfigFromFile(string filePath)
             => JsonConvert.DeserializeObject<BotConfig>(File.ReadAllText(filePath));
+
+        public bool IsAdministrator(IUser user)
+            => this.administrators.Any(id => id == user.Id);
     }
 }
