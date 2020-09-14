@@ -29,7 +29,7 @@ namespace P1x3lc0w.DiscordRoleGroupBot
         /// Adds all roles with a certain prefix as group roles.
         /// </summary>
         /// <param name="prefix">The prefix to filter by.</param>
-        [Command("admin config role addall")]
+        [Command("config role addall")]
         [RequireUserPermission(GuildPermission.Administrator)]
         public async Task AddAllGroupRoles(string prefix)
         {
@@ -46,7 +46,7 @@ namespace P1x3lc0w.DiscordRoleGroupBot
         /// Add a role as a group role.
         /// </summary>
         /// <param name="role">The role to be added as a group role.</param>
-        [Command("admin config role add")]
+        [Command("config role add")]
         [RequireUserPermission(GuildPermission.Administrator)]
         public Task AddGroupRole(IRole role)
             => SetGroupRoleAsync(role, true);
@@ -55,7 +55,7 @@ namespace P1x3lc0w.DiscordRoleGroupBot
         /// Removes a role as a group role.
         /// </summary>
         /// <param name="role">The role to be removed as a group role.</param>
-        [Command("admin config role remove")]
+        [Command("config role remove")]
         [RequireUserPermission(GuildPermission.Administrator)]
         public Task RemoveGroupRole(IRole role)
             => SetGroupRoleAsync(role, false);
@@ -65,7 +65,7 @@ namespace P1x3lc0w.DiscordRoleGroupBot
         /// </summary>
         /// <param name="role">The role to be set or removed as a group role.</param>
         /// <param name="value">Weather or not the role should be a group role.</param>
-        [Command("admin config role set")]
+        [Command("config role set")]
         [RequireUserPermission(GuildPermission.Administrator)]
         public async Task SetGroupRoleAsync(IRole role, bool value)
         {
@@ -89,7 +89,7 @@ namespace P1x3lc0w.DiscordRoleGroupBot
         /// Sets the role to be used as a mirror role if the user does not have a color.
         /// </summary>
         /// <param name="role">The role to be used as a mirror role if the user does not have a color.</param>
-        [Command("admin config defaultcolorrole")]
+        [Command("config defaultcolorrole")]
         [RequireUserPermission(GuildPermission.Administrator)]
         public async Task SetDefaultColorRole(IRole role)
         {
@@ -106,7 +106,7 @@ namespace P1x3lc0w.DiscordRoleGroupBot
         /// Set if the guild allows custim color roles
         /// </summary>
         /// <param name="value">Whether or not to allow custom color roles.</param>
-        [Command("admin config allowCustomColorRoles")]
+        [Command("config allowCustomColorRoles")]
         [RequireUserPermission(GuildPermission.Administrator)]
         public async Task SetAllowCustomColorRoles(bool value)
         {
@@ -124,7 +124,7 @@ namespace P1x3lc0w.DiscordRoleGroupBot
         /// </summary>
         ///  <param name="role">The role to be allowed or disallowed as a custom color role.</param>
         /// <param name="value">Whether or not to allow the role as a custom color role.</param>
-        [Command("admin config allowCustomColorRole")]
+        [Command("config allowCustomColorRole")]
         [RequireUserPermission(GuildPermission.Administrator)]
         public async Task SetAllowCustomColorRoles(IRole role, bool value)
         {
