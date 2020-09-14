@@ -72,51 +72,19 @@ namespace P1x3lc0w.DiscordRoleGroupBot
                     }
 
                     IList<ulong> guildMirrorRoleIds = guildData.GetMirrorRoles().ToList();
-                    IRole userMirrorRole = null;
-                    IRole highestColorRole = null;
 
-                    //If the user does not have a group role, we do not need to add a mirror role.
-                    if (highestGroupRole != null)
-                    {
-                        //Get the highest role with the following conditions:
-                        //  - Is not a group role.
-                        //  - Is not a mirror role.
-                        //  - Has a color (Other that default).
-                        highestColorRole = (from ulong roleId in userRoleIds
-                                            where !groupIds.Contains(roleId) && !guildMirrorRoleIds.Contains(roleId)
-                                            let role = user.Guild.GetRole(roleId)
-                                            where role.Color != Color.Default
-                                            orderby role.Position descending
-                                            select role)
-                                            .FirstOrDefault();
+                    IRole userMirrorRole = 
+                        await GetMirrorRole(
+                            user: user,
+                            userRoleIds: userRoleIds,
+                            guildMirrorRoleIds: guildMirrorRoleIds,
+                            groupIds: groupIds,
+                            guildData: guildData,
+                            highestGroupRole: highestGroupRole,
+                            rolesToAdd: rolesToAdd,
+                            guild: user.Guild
+                        );
 
-                        if (highestColorRole == null)
-                        {
-                            //If the user does not have a role that would give them a color,
-                            //but still has a group role, their default color would get overridden.
-                            //Therefore we see if the guild has a default color role configured.
-
-                            IRole DefaultColorRole = guildData.GetDefaultColorRole(user.Guild);
-
-                            if (DefaultColorRole != null)
-                            {
-                                userMirrorRole = DefaultColorRole;
-                            }
-                        }
-                        else if (highestColorRole.Position < highestGroupRole.Position)
-                        {
-                            //If the user's highest color role is below is higest group role their color would get overridden.
-                            //To avoid this we get or create a mirror role to restore their color.
-
-                            userMirrorRole = await guildData.GetOrCreateMirrorRole(user.Guild, highestColorRole);
-                        }
-
-                        if (userMirrorRole != null)
-                        {
-                            if (!userRoleIds.Contains(userMirrorRole.Id))
-                                rolesToAdd.Add(userMirrorRole);
-                        }
-                    }
 
                     //Go through all of the guild's mirror roles to remove any unecessary ones.
                     foreach (ulong mirrorRoleId in guildMirrorRoleIds)
@@ -147,6 +115,83 @@ namespace P1x3lc0w.DiscordRoleGroupBot
             {
                 log?.Invoke(new LogMessage(LogSeverity.Error, nameof(UpdateUserRoles), $"Exception while updating user {e.GetType().FullName}: {e.Message}\n{e.StackTrace}", e));
             }
+        }
+
+        private static async Task<IRole> GetMirrorRole(
+            IGuildUser user,
+            IReadOnlyCollection<ulong> userRoleIds,
+            IList<ulong> guildMirrorRoleIds,
+            HashSet<ulong> groupIds,
+            GuildData guildData,
+            IRole highestGroupRole,
+            IList<IRole> rolesToAdd,
+            IGuild guild
+        )
+        {
+
+            IRole userMirrorRole = null;
+
+            if (guildData.AllowCustomColorRoles)
+            {
+                if(guildData.Users.TryGetValue(user.Id, out UserData userData))
+                {
+                    if (
+                        userData.CustomColorRole > 10 &&
+                        !guildData.DisallowedCustomColorRoles.Contains(userData.CustomColorRole) &&
+                        userRoleIds.Contains(userData.CustomColorRole)
+                        )
+                    {
+                        userMirrorRole = await guildData.GetOrCreateMirrorRole(guild, guild.GetRole(userData.CustomColorRole));
+                    }
+                }
+            }
+
+            //If the user does not have a group role, we do not need to add a mirror role.
+            if (highestGroupRole != null)
+            {
+                IRole highestColorRole = null;
+
+                //Get the highest role with the following conditions:
+                //  - Is not a group role.
+                //  - Is not a mirror role.
+                //  - Has a color (Other that default).
+                highestColorRole = (from ulong roleId in userRoleIds
+                                    where !groupIds.Contains(roleId) && !guildMirrorRoleIds.Contains(roleId)
+                                    let role = user.Guild.GetRole(roleId)
+                                    where role.Color != Color.Default
+                                    orderby role.Position descending
+                                    select role)
+                                    .FirstOrDefault();
+
+                if (highestColorRole == null)
+                {
+                    //If the user does not have a role that would give them a color,
+                    //but still has a group role, their default color would get overridden.
+                    //Therefore we see if the guild has a default color role configured.
+
+                    IRole DefaultColorRole = guildData.GetDefaultColorRole(user.Guild);
+
+                    if (DefaultColorRole != null)
+                    {
+                        userMirrorRole = DefaultColorRole;
+                    }
+                }
+                else if (highestColorRole.Position < highestGroupRole.Position)
+                {
+                    //If the user's highest color role is below is higest group role their color would get overridden.
+                    //To avoid this we get or create a mirror role to restore their color.
+
+                    userMirrorRole = await guildData.GetOrCreateMirrorRole(user.Guild, highestColorRole);
+                }
+            }
+
+            if (userMirrorRole != null)
+            {
+                if (!userRoleIds.Contains(userMirrorRole.Id))
+                    rolesToAdd.Add(userMirrorRole);
+            }
+
+            return userMirrorRole;
         }
     }
 }

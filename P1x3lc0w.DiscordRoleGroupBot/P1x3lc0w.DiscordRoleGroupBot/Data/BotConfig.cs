@@ -1,5 +1,7 @@
-﻿using Newtonsoft.Json;
+﻿using Discord;
+using Newtonsoft.Json;
 using System.IO;
+using System.Linq;
 
 namespace P1x3lc0w.DiscordRoleGroupBot.Data
 {

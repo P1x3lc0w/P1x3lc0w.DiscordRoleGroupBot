@@ -14,6 +14,9 @@ namespace P1x3lc0w.DiscordRoleGroupBot.Data
         public ConcurrentDictionary<ulong, ulong?> MirrorRoles { get; set; } = new ConcurrentDictionary<ulong, ulong?>();
         public ConcurrentDictionary<ulong, ulong?> RoleGroups { get; set; } = new ConcurrentDictionary<ulong, ulong?>();
         public ulong DefaultColorRoleId { get; set; }
+        public bool AllowCustomColorRoles { get; set; }
+        public ConcurrentHashSet<ulong> DisallowedCustomColorRoles { get; set; } = new ConcurrentHashSet<ulong>();
+        public ConcurrentDictionary<ulong, UserData> Users { get; set; } = new ConcurrentDictionary<ulong, UserData>();
 
         public IRole GetDefaultColorRole(IGuild guild)
             => guild.GetRole(DefaultColorRoleId);

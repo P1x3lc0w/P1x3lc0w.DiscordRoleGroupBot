@@ -102,6 +102,93 @@ namespace P1x3lc0w.DiscordRoleGroupBot
             else await ReplyErrorAsync("Failed to get guild data, try again.");
         }
 
+        /// <summary>
+        /// Set if the guild allows custim color roles
+        /// </summary>
+        /// <param name="value">Whether or not to allow custom color roles.</param>
+        [Command("admin config allowCustomColorRoles")]
+        [RequireUserPermission(GuildPermission.Administrator)]
+        public async Task SetAllowCustomColorRoles(bool value)
+        {
+            if (SourceBot.Data.GuildDictionary.TryGetValue(Context.Guild.Id, out GuildData guildData))
+            {
+                guildData.AllowCustomColorRoles = value;
+
+                await ReplySuccessAsync($"Set AllowCustomColorRoles to `{value}`");
+            }
+            else await ReplyErrorAsync("Failed to get guild data, try again.");
+        }
+
+        /// <summary>
+        /// Set specific Roles to be disallowed as custom color roles.
+        /// </summary>
+        ///  <param name="role">The role to be allowed or disallowed as a custom color role.</param>
+        /// <param name="value">Whether or not to allow the role as a custom color role.</param>
+        [Command("admin config allowCustomColorRole")]
+        [RequireUserPermission(GuildPermission.Administrator)]
+        public async Task SetAllowCustomColorRoles(IRole role, bool value)
+        {
+            if (SourceBot.Data.GuildDictionary.TryGetValue(Context.Guild.Id, out GuildData guildData))
+            {
+                if (value)
+                {
+                    if (guildData.DisallowedCustomColorRoles.Remove(role.Id))
+                    {
+                        await ReplySuccessAsync($"Role `{role.Name}` is now allowed as a custom color role.");
+                    }
+                    else
+                    {
+                        await ReplyErrorAsync($"Role `{role.Name}` is already allowed as a custom color role.");
+                    }
+                }
+                else
+                {
+                    if (guildData.DisallowedCustomColorRoles.Add(role.Id))
+                    {
+                        await ReplySuccessAsync($"Role `{role.Name}` is now disallowed as a custom color role.");
+                    }
+                    else
+                    {
+                        await ReplyErrorAsync($"Role `{role.Name}` is already disallowed as a custom color role.");
+                    }
+                }
+            }
+            else await ReplyErrorAsync("Failed to get guild data, try again.");
+        }
+
+        /// <summary>
+        /// Set a role as the user's custom color role
+        /// </summary>
+        ///  <param name="role">The role to be set as a custom color role.</param>
+        [Command("colorrole")]
+        public async Task SetCustomColorRoles(IRole role)
+        {
+            if (SourceBot.Data.GuildDictionary.TryGetValue(Context.Guild.Id, out GuildData guildData))
+            {
+                if (guildData.AllowCustomColorRoles)
+                {
+                    if (guildData.DisallowedCustomColorRoles.Contains(role.Id))
+                    {
+                        await ReplyErrorAsync($"Sorry {Context.User.Mention}, the admins of this guild have disallowed the role `{role.Name}` to be used as a custom color role.");
+                        return;
+                    }
+
+                    UserData userData = guildData.Users.GetOrAdd(Context.User.Id, (id) => new UserData());
+
+                    userData.CustomColorRole = role.Id;
+
+                    await UserActions.UpdateUserRoles(Context.User as IGuildUser, SourceBot.Data, SourceBot.Log);
+
+                    await ReplySuccessAsync($"{Context.User.Mention}, set your color role to `{role.Name}`");
+                }
+                else
+                {
+                    await ReplyErrorAsync($"Sorry {Context.User.Mention}, the admins of this guild have not enabled custom color roles.");
+                }
+            }
+            else await ReplyErrorAsync("Failed to get guild data, try again.");
+        }
+
         private const int ROLES_PER_PAGE = 30;
 
         /// <summary>
