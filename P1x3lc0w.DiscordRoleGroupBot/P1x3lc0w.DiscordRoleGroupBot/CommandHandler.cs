@@ -40,8 +40,12 @@ namespace P1x3lc0w.DiscordRoleGroupBot
         private async Task HandleCommandAsync(SocketMessage messageParam)
         {
             // Don't process the command if it was a system message
-            var message = messageParam as SocketUserMessage;
-            if (message == null) return;
+            if (!(messageParam is SocketUserMessage message)) 
+                return;
+
+            // Only proccess guild messages
+            if (!(message.Channel is SocketTextChannel))
+                return;
 
             // Create a number to track where the prefix ends and the command begins
             int argPos = 0;

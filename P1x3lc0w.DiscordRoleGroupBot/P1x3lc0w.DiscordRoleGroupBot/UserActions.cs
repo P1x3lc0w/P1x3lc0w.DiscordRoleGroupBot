@@ -178,7 +178,7 @@ namespace P1x3lc0w.DiscordRoleGroupBot
                 }
                 else if (highestColorRole.Position < highestGroupRole.Position)
                 {
-                    //If the user's highest color role is below is higest group role their color would get overridden.
+                    //If the user's highest color role is below is highest group role their color would get overridden.
                     //To avoid this we get or create a mirror role to restore their color.
 
                     userMirrorRole = await guildData.GetOrCreateMirrorRole(user.Guild, highestColorRole);

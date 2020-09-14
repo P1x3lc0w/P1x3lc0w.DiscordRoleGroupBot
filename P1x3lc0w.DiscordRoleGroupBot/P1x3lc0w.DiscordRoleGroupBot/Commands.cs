@@ -173,6 +173,12 @@ namespace P1x3lc0w.DiscordRoleGroupBot
                         return;
                     }
 
+                    if (!((IGuildUser)Context.User).RoleIds.Contains(role.Id))
+                    {
+                        await ReplyErrorAsync($"Sorry {Context.User.Mention}, you don't have the role `{role.Name}`");
+                        return;
+                    }
+
                     UserData userData = guildData.Users.GetOrAdd(Context.User.Id, (id) => new UserData());
 
                     userData.CustomColorRole = role.Id;
